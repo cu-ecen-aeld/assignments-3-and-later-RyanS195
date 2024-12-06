@@ -1,0 +1,23 @@
+
+
+int main(int argc, char* argv[])
+{
+    char* filePath = argv[1];
+    char* writeStr = argv[2];
+
+    openlog(NULL, 0, LOG_USER);
+
+    //FILE file* = fopen(filePath, "w");
+    int fd = open(filePath, O_WRONLY);
+
+    if (fd == -1)
+    {
+        syslog(LOG_ERR, "Failed to access file descriptor");
+    }
+
+
+}
+
+~
+~
+
