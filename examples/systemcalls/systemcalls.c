@@ -1,4 +1,9 @@
 #include "systemcalls.h"
+#include <stdlib.h>
+#include <sys/types.h>
+#include <sys/wait.h>
+#include <unistd.h>
+#include <fcntl.h>
 
 /**
  * @param cmd the command to execute with system()
@@ -16,6 +21,12 @@ bool do_system(const char *cmd)
  *   and return a boolean true if the system() call completed with success
  *   or false() if it returned a failure
 */
+    int status = system(cmd);
+
+    if (status == -1)
+    {
+	return false;
+    }
 
     return true;
 }
@@ -58,10 +69,50 @@ bool do_exec(int count, ...)
  *   as second argument to the execv() command.
  *
 */
+    int status;
+    fflush(stdout);
+
+    pid_t pid = fork();
+
+    if (pid == -1)
+    {
+	return false;
+    }
+    else if (pid == 0)
+    {
+	int result = execv(command[0],command);
+        
+	if (result == -1)
+	{
+	    exit(1);
+	    return false;
+	}
+
+	exit(1);
+    } 
+    else
+    {
+        int waitStatus = wait(&status);
+
+        if (waitStatus == -1)
+        {
+	        return false;
+        }
+        else if (WIFEXITED(status))
+        {
+        	if (WEXITSTATUS(status) == 0)
+        	{
+        	    return true;
+        	}
+        	else
+        	{
+        	return false;
+                }
+        }
+    }
 
     va_end(args);
-
-    return true;
+    return false;
 }
 
 /**
@@ -92,8 +143,52 @@ bool do_exec_redirect(const char *outputfile, int count, ...)
  *   The rest of the behaviour is same as do_exec()
  *
 */
+    int status;
+
+    int fd = open(outputfile,  O_WRONLY|O_TRUNC|O_CREAT, 0644);
+
+    if (fd == -1)
+    {
+	return false;
+    }
+
+    fflush(stdout);
+
+    pid_t pid = fork();
+
+    if (pid == -1)
+    {
+        return false;
+    }
+    else if (pid == 0)
+    {
+	
+	if (dup2(fd,1) < 0)
+	{
+	    return false;
+	}
+
+	close(fd);
+
+        int result = execv(command[0],command);
+
+        if (result == -1)
+        {
+            exit(1);
+            return false;
+        }
+
+        exit(1);
+    }
+
+    int waitStatus = wait(&status);
+
+    if (waitStatus == -1)
+    {
+            return false;
+    }
 
     va_end(args);
 
-    return true;
+    return WIFEXITED(status);
 }
