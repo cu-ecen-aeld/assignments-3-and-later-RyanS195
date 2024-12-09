@@ -5,4 +5,4 @@ compile: writer.c
 	$(COMPILE_TYPE) writer.c -o writer
 
 clean:
-	rm writer
+	rm -f writer
