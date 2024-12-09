@@ -30,6 +30,9 @@ fi
 
 mkdir -p ${OUTDIR}
 
+echo "Stuff end"
+echo ${sysroot}
+
 cd "$OUTDIR"
 if [ ! -d "${OUTDIR}/linux-stable" ]; then
     #Clone only if the repository does not exist.
@@ -102,8 +105,8 @@ echo "Add library dependencies to rootfs"
 
 echo "current dir"
 pwd
-echo "rootDir:"
-ls ${rootDir}/lib/ld-linux-aarch64.so.1
+#echo "rootDir:"
+#ls ${rootDir}/lib/ld-linux-aarch64.so.1
 echo "Stuff end"
 echo ${sysroot}
 ls ${sysroot}
