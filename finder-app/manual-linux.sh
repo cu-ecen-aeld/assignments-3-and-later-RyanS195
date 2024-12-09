@@ -33,6 +33,10 @@ mkdir -p ${OUTDIR}
 echo "Stuff end"
 echo ${sysroot}
 
+echo "repo dir"
+echo ${INIT_DIR}
+pwd
+
 cd "$OUTDIR"
 if [ ! -d "${OUTDIR}/linux-stable" ]; then
     #Clone only if the repository does not exist.
