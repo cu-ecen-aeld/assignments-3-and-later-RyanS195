@@ -13,7 +13,10 @@ FINDER_APP_DIR=$(realpath $(dirname $0))
 ARCH=arm64
 CROSS_COMPILE=aarch64-none-linux-gnu-
 INIT_DIR=/home/ryan/Assignments/Week1/assignments-3-and-later-RyanS195/finder-app
-rootDir=/home/ryan/arm-cross-compiler/arm-gnu-toolchain-13.3.rel1-x86_64-aarch64-none-linux-gnu/aarch64-none-linux-gnu/libc
+rootDir=/home/ryan/arm-cross-compiler/arm-gnu-toolchain-13.3.rel1-x86_64-aarch64-none-linux-gnu/bin/../aarch64-none-linux-gnu/libc
+sysroot=`${CROSS_COMPILE}gcc -print-sysroot`
+
+
 export PATH=/home/ryan/arm-cross-compiler/arm-gnu-toolchain-13.3.rel1-x86_64-aarch64-none-linux-gnu/bin/:$PATH
 
 
@@ -99,20 +102,29 @@ echo "Add library dependencies to rootfs"
 
 echo "current dir"
 pwd
+echo "rootDir:"
+ls ${rootDir}/lib/ld-linux-aarch64.so.1
+echo "Stuff end"
+echo ${sysroot}
+ls ${sysroot}
 
-#cp ${rootDir}/lib/ld-linux-aarch64.so.1 ${OUTDIR}/rootfs/lib/
-cp ${rootDir}/lib64/* ${OUTDIR}/rootfs/lib64/
+cp ${sysroot}/lib/ld-linux-aarch64.so.1 ${OUTDIR}/rootfs/lib/
+cp ${sysroot}/lib64/libm.so.6 ${OUTDIR}/rootfs/lib64/
+cp ${sysroot}/lib64/libresolv.so.2 ${OUTDIR}/rootfs/lib64/
+cp ${sysroot}/lib64/libc.so.6 ${OUTDIR}/rootfs/lib64/
+#cp ${rootDir}/lib64/* ${OUTDIR}/rootfs/lib64/
+#cp ${OUTDIR}/gcc-arm-10.3-2021.07-x86_64-aarch64-none-linux-gnu/aarch64-none-linux-gnu/libc/lib64/* ${OUTDIR}/rootfs/lib64/
 
 # TODO: Make device nodes
 echo "Make device nodes"
-sudo mknod -m 777 dev/null c 1 3
-sudo mknod -m 777 dev/console c 5 1
+sudo mknod -m 666 dev/null c 1 3
+sudo mknod -m 666 dev/console c 5 1
 
 # TODO: Clean and build the writer utility
 echo "Clean and build the writer utility"
 cd ${INIT_DIR}
 
-echo "current Dir"
+echo "Clean and build we should be in finder-app"
 pwd
 
 make clean
