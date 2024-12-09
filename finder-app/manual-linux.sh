@@ -35,6 +35,7 @@ echo ${sysroot}
 
 echo "repo dir"
 echo ${INIT_DIR}
+echo "pwd"
 pwd
 
 cd "$OUTDIR"
